@@ -1,8 +1,35 @@
 import { useRouter } from "expo-router";
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "../context/authContext";
 export default function loginScreen() {
+const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setisLoading] = useState(false);
     const router  = useRouter();
+    const {signIn} = useAuth();
+
+     const handleLogin = async () => {
+        if (!email || !password) {
+          Alert.alert("Error", "Please fill the details");
+        }
+      
+    
+        setisLoading(true);
+        try {
+          await signIn(email, password);
+    
+          router.push('/(tabs)');
+        } catch (error) {
+          console.log("error"+error);
+        //  alert("error"+error);
+          Alert.alert("Error", "Error Signin");
+        } finally {
+          setisLoading(false);
+        }
+      };
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -18,6 +45,8 @@ export default function loginScreen() {
               autoComplete="email"
               keyboardType="email-address"
               placeholderTextColor={" #999"}
+              value={email}
+              onChangeText={setEmail}
             ></TextInput>
 
             <TextInput
@@ -26,13 +55,17 @@ export default function loginScreen() {
               autoCapitalize="none"
               autoComplete="password"
               secureTextEntry
+               value={password}
+              onChangeText={setPassword}
             ></TextInput>
         <TouchableOpacity onPress={()=>{
-          //    router.push('/(auth)/signup');
+        
+          handleLogin();
         }}
         style = {styles.signButton}
         >
-            <Text  style={styles.signText}>Sign in </Text>
+          {isLoading? (<ActivityIndicator size={24}/>):  (<Text  style={styles.signText}>Sign in </Text>) }
+           
         </TouchableOpacity>
 
         <TouchableOpacity

@@ -20,9 +20,9 @@ export default function SignupScreen() {
   const router = useRouter();
   const { signUp } = useAuth();
 
-  useEffect(() => {
-    router.push("/(auth)/onboarding");
-  }, []);
+  // useEffect(() => {
+  //   router.push("/(auth)/onboarding");
+  // }, []);
 
   const handleSignup = async () => {
     if (!email || !password) {
@@ -35,7 +35,11 @@ export default function SignupScreen() {
     setisLoading(true);
     try {
       await signUp(email, password);
+
+      router.push('/(auth)/onboarding');
     } catch (error) {
+      console.log("error"+error);
+      alert("error"+error);
       Alert.alert("Error", "Error signup");
     } finally {
       setisLoading(false);
